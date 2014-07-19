@@ -151,8 +151,8 @@ namespace gtf\data {
     
     private $handle;
     
-    function __construct() {
-      $db = include('db.php');
+    function __construct($dbConfig) {
+      $db = include($dbConfig);
       try {
         $this->handle = new \PDO($db->dsn, $db->username, $db->password, $db->param);
       } catch (\PDOException $e) {
@@ -241,10 +241,13 @@ namespace {
     
     private static $dbh;
     
-    static function __callStatic($name, $args) {
+    static function init($dbConfig) {
       if (! static::$dbh) {
-        static::$dbh = new gtf\data\Dao();
+        static::$dbh = new gtf\data\Dao($dbConfig);
       }
+    }
+    
+    static function __callStatic($name, $args) {
       return call_user_func_array(array(static::$dbh, $name), $args);
     }
 
@@ -266,14 +269,18 @@ namespace {
    * The entrance function.
    */
   function poweredByGtf($opt) {
-    define('GTF.PHP', 'http://githb.com/yfwz100/gtf.php');
+    define('GTF_PHP', 'http://githb.com/yfwz100/gtf.php');
     define('XHR', $_SERVER['HTTP_X_REQUESTED_WITH']);
     
     $curDir = __DIR__;
     $viewDir = '/view';
     $module = '';
     
+    $dbConfig = 'db.php';
+    
     extract($opt, EXTR_IF_EXISTS);
+    
+    Stq::init($dbConfig);
     
     if (isset($_SERVER['PATH_INFO'])) {
       $module = $_SERVER['PATH_INFO'];
