@@ -269,6 +269,7 @@ namespace {
    * The entrance function.
    */
   function poweredByGtf($opt) {
+    $namespace = 'GTF_PHP';
     $viewDir = 'view';
     $dbConfig = 'db.php';
     
@@ -278,7 +279,7 @@ namespace {
       $viewDir = __DIR__."/$viewDir";
     }
     
-    define('GTF_PHP', 'http://githb.com/yfwz100/gtf.php');
+    define($namespace, 'http://githb.com/yfwz100/gtf.php');
     define('XHR', $_SERVER['HTTP_X_REQUESTED_WITH']);
     
     Stq::init($dbConfig);
