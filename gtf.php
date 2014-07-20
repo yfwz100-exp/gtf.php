@@ -162,12 +162,12 @@ namespace gtf\data {
     
     function query($sql, array $attr = array()) {
       $stat = $this->handle->prepare($sql);
-      $stat->execute($attr);
-      $rs = array();
-      while($prop = $stat->fetch(\PDO::FETCH_ASSOC)) {
-        $rs[] = $prop;
+      if ($stat->execute($attr)) {
+        $rs = $stat->fetchAll(\PDO::FETCH_ASSOC);
+        return $rs;
+      } else {
+        return null;
       }
-      return $rs;
     }
     
     function unique($sql, array $attr = array()) {
