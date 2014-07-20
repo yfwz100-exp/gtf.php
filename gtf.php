@@ -269,24 +269,26 @@ namespace {
    * The entrance function.
    */
   function poweredByGtf($opt) {
-    define('GTF_PHP', 'http://githb.com/yfwz100/gtf.php');
-    define('XHR', $_SERVER['HTTP_X_REQUESTED_WITH']);
-    
-    $curDir = __DIR__;
-    $viewDir = '/view';
-    $module = '';
-    
+    $viewDir = 'view';
     $dbConfig = 'db.php';
     
     extract($opt, EXTR_IF_EXISTS);
     
+    if ($viewDir[0] != '/') {
+      $viewDir = __DIR__."/$viewDir";
+    }
+    
+    define('GTF_PHP', 'http://githb.com/yfwz100/gtf.php');
+    define('XHR', $_SERVER['HTTP_X_REQUESTED_WITH']);
+    
     Stq::init($dbConfig);
     
+    $module = '';
     if (isset($_SERVER['PATH_INFO'])) {
       $module = $_SERVER['PATH_INFO'];
     }
 
-    $module_path = realpath("$curDir$viewDir$module.php");
+    $module_path = realpath("$viewDir$module.php");
     if ($module_path) {
       Tpl::base($module_path);
     } else {
