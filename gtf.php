@@ -147,6 +147,55 @@ namespace gtf\view {
 
 namespace gtf\data {
   
+  class CachedItr implements Iterator {
+    
+    private $stat;
+    private $cached;
+    private $index;
+    
+    function __construct($stat) {
+      $this->stat = $stat;
+      $this->cached = array();
+      $this->rewind();
+    }
+    
+    function key() {
+      return $this->index;
+    }
+    
+    function current() {
+      return $this->cached[$this->index];
+    }
+    
+    function rewind() {
+      $this->index = -1;
+      $this->next();
+    }
+    
+    function valid() {
+      return $this->stat || ($this->index > -1 && $this->index < count($this->cached));
+    }
+    
+    function next() {
+      if ($this->stat) {
+        $rs = $this->stat->fetch(\PDO::FETCH_ASSOC);
+        if ($rs) {
+          $this->cached[] = $rs;
+        } else {
+          $this->__destruct();
+        }
+      }
+      $this->index ++;
+    }
+    
+    function __destruct() {
+      if ($this->stat) {
+        $this->stat->closeCursor();
+        $this->stat = null;
+      }
+    }
+  }
+  
   class Dao {
     
     private $handle;
@@ -165,6 +214,15 @@ namespace gtf\data {
       if ($stat->execute($attr)) {
         $rs = $stat->fetchAll(\PDO::FETCH_ASSOC);
         return $rs;
+      } else {
+        return null;
+      }
+    }
+    
+    function iter($sql, array $attr = array()) {
+      $stat = $this->handle->prepare($sql);
+      if ($stat->execute($attr)) {
+        return new CachedItr($stat);
       } else {
         return null;
       }
