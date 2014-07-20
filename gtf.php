@@ -147,7 +147,7 @@ namespace gtf\view {
 
 namespace gtf\data {
   
-  class CachedItr implements Iterator {
+  class CachedItr implements \Iterator {
     
     private $stat;
     private $cached;
