@@ -271,9 +271,9 @@ namespace gtf\resource {
       }
     }
     
-    function need($name) {
+    function need($name, $description = "Parameter required!") {
       if (!$name) {
-        die("Parameter required!");
+        die($description);
       }
     }
     
