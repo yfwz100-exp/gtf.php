@@ -1,6 +1,19 @@
 <?php
 namespace gtf\view {
   
+  class Holder {
+    
+    private $name;
+    
+    function __construct($name) {
+      $this->name = $name;
+    }
+    
+    function __toString() {
+      return $this->name;
+    }
+  }
+  
   class PartDef {
     public $name;
     private $content;
@@ -13,19 +26,24 @@ namespace gtf\view {
     function need() {
       return $this;
     }
+    
+    function __invoke($param) {
+      $body = '';
+      foreach ($this->content as $c) {
+        if ($c instanceof Holder && $param) {
+          $body .= $param[$c];
+        } else {
+          $body .= $c;
+        }
+      }
+      return $body;
+    }
 
     function append($content) {
       $this->content[] = $content;
       return $this;
     }
 
-    function __toString() {
-      $body = '';
-      foreach ($this->content as $c) {
-        $body .= $c;
-      }
-      return $body;
-    }
   }
   
   class BaseDef {
@@ -54,16 +72,6 @@ namespace gtf\view {
     }
   }
 
-  class Holder {
-    private $name;
-    function __construct($name) {
-      $this->name = $name;
-    }
-    function __toString() {
-      return ${$this->name};
-    }
-  }
-
   class Page {
 
     private $stack;
@@ -80,10 +88,8 @@ namespace gtf\view {
 
     function usePart($name, $opt = null) {
       if (array_key_exists($name, $this->tpl)) {
-        if (is_array($opt)) {
-          extract($opt);
-        }
-        echo $this->tpl[$name];
+        $part = $this->tpl[$name];
+        $part($opt);
       }
     }
 
