@@ -89,7 +89,12 @@ namespace gtf\view {
     function usePart($name, $opt = null) {
       if (array_key_exists($name, $this->tpl)) {
         $part = $this->tpl[$name];
-        $part($opt);
+        if ($this->stack->isEmpty()) {
+          echo $part($opt);
+        } else {
+          $this->stack->top()->append(ob_get_clean())->append($part);
+          ob_start();
+        }
       }
     }
 
