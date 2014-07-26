@@ -364,6 +364,8 @@ namespace {
     $module_path = realpath("$viewDir$module.php");
     if ($module_path) {
       Tpl::base($module_path);
+    } else if ($module == $startPage) {
+      echo "Gtf is not configured correctly. See $namespace for more information.";
     } else {
       header("Location: /$_SERVER[PHP_SELF]/$startPage");
     }
