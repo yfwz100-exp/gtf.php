@@ -216,7 +216,7 @@ namespace gtf\data {
       try {
         $this->handle = new \PDO($db->dsn, $db->username, $db->password, $db->param);
       } catch (\PDOException $e) {
-        die('Error while connecting to database.');
+        trigger_error('Error while connecting to database.');
       }
     }
     
@@ -339,19 +339,22 @@ namespace {
    */
   function poweredByGtf($opt) {
     $namespace = 'GTF_PHP';
-    $viewDir = 'view';
+    $viewDir = 'site';
     $dbConfig = 'db.php';
+    $startPage = '';
     
     extract($opt, EXTR_IF_EXISTS);
     
     if ($viewDir[0] != '/') {
-      $viewDir = __DIR__."/$viewDir";
+      $viewDir = getcwd()."/$viewDir";
     }
     
     define($namespace, 'http://githb.com/yfwz100/gtf.php');
     define('XHR', $_SERVER['HTTP_X_REQUESTED_WITH']);
     
-    Stq::init($dbConfig);
+    if (file_exists($dbConfig)) {
+      Stq::init($dbConfig);
+    }
     
     $module = '';
     if (isset($_SERVER['PATH_INFO'])) {
@@ -362,7 +365,7 @@ namespace {
     if ($module_path) {
       Tpl::base($module_path);
     } else {
-      header('Location: /site.php/home');
+      header("Location: /$_SERVER[PHP_SELF]/$startPage");
     }
 
     Tpl::flush();
