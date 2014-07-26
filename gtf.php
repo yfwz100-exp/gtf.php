@@ -367,7 +367,7 @@ namespace {
     } else if ($module == $startPage) {
       echo "Gtf is not configured correctly. See $namespace for more information.";
     } else {
-      header("Location: /$_SERVER[PHP_SELF]/$startPage");
+      header("Location: $_SERVER[PHP_SELF]/$startPage");
     }
 
     Tpl::flush();
