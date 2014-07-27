@@ -1,0 +1,13 @@
+{
+  "name": "yfwz100/gtf.php",
+  "description": "An intrinsic PHP web framework.",
+  "homepage": "https://github.com/yfwz100/gtf.php",
+  "version": "0.1",
+  "license": "Apache-2.0",
+  "require": {
+    "PHP": ">=5.3"
+  },
+  "autoload": {
+    "files": ["gtf.php"]
+  }
+}
