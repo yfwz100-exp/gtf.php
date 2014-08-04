@@ -365,7 +365,7 @@ namespace {
     if ($module_path) {
       Tpl::base($module_path);
     } else if ($module == $startPage) {
-      echo "Gtf is not configured correctly. See $namespace for more information.";
+      echo "No hompage is found. See " . constant($namespace) . " for more information.";
     } else {
       header("Location: $_SERVER[PHP_SELF]/$startPage");
     }
