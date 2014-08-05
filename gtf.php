@@ -222,29 +222,41 @@ namespace gtf\data {
     
     function query($sql, array $attr = array()) {
       $stat = $this->handle->prepare($sql);
-      if ($stat->execute($attr)) {
-        $rs = $stat->fetchAll(\PDO::FETCH_ASSOC);
-        return $rs;
+      if ($stat) {
+        if ($stat->execute($attr)) {
+          $rs = $stat->fetchAll(\PDO::FETCH_ASSOC);
+          return $rs;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        trigger_error("Error in executing SQL: $sql .");
       }
     }
     
     function iter($sql, array $attr = array()) {
       $stat = $this->handle->prepare($sql);
-      if ($stat->execute($attr)) {
-        return new CachedItr($stat);
+      if ($stat) {
+        if ($stat->execute($attr)) {
+          return new CachedItr($stat);
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        trigger_error("Error in executing SQL: $sql .");
       }
     }
     
     function unique($sql, array $attr = array()) {
       $stat = $this->handle->prepare($sql);
-      $stat->execute($attr);
-      $result = $stat->fetch(\PDO::FETCH_ASSOC);
-      $stat->closeCursor();
-      return $result;
+      if ($stat) {
+        $stat->execute($attr);
+        $result = $stat->fetch(\PDO::FETCH_ASSOC);
+        $stat->closeCursor();
+        return $result;
+      } else {
+        trigger_error("Error in executing SQL: $sql .");
+      }
     }
     
     function state($sql) {
@@ -253,8 +265,12 @@ namespace gtf\data {
     
     function update($sql, $attr = array()) {
       $stat = $this->handle->prepare($sql);
-      $stat->execute($attr);
-      return $stat->rowCount();
+      if ($stat) {
+        $stat->execute($attr);
+        return $stat->rowCount();
+      } else {
+        trigger_error("Error in executing SQL: $sql .");
+      }
     }
     
     function quote($str) {
